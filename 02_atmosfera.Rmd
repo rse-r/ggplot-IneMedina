@@ -12,35 +12,42 @@ library(dplyr)
 library(ggplot2)
 ```
 
-
 ```{r carga-datos}
 atmosfera <- datos::atmosfera
 ```
 
-
-1. Graficá la relación entre la presión y la temperatura. 
-¿Es una relación lineal más o menos limpia o hay otras cosas “raras”?
+1.  Graficá la relación entre la presión y la temperatura. ¿Es una relación lineal más o menos limpia o hay otras cosas “raras”? muchos puntos
 
 ```{r}
+ggplot(atmosfera, aes(presion, temperatura )) +
+  geom_point()
+```
+
+2.  Calculá la temperatura media de cada mes y visualizalo en un gráfico de líneas.(Es decir, el ciclo anual promedio de temperatura). ¿Cómo describirías el ciclo anual en pocas palabras?
+
+```{r}
+atmosfera %>%
+  group_by(mes) %>%
+  summarise(temp_media_por_mes = mean(temperatura, na.rm = TRUE)) %>%
+  ggplot(aes(mes, temp_media_por_mes)) +
+  geom_line()
 
 ```
 
-
-2. Calculá la temperatura media de cada mes y visualizalo en un gráfico de líneas.(Es decir, el ciclo anual promedio de temperatura). ¿Cómo describirías el ciclo anual en pocas palabras?
-
-```{r}
-
-```
-
-
-3. Calculá lo mismo pero para cada hemisferio. Graficalo con una línea de distinto color para cada hemisferio. 
-(Ayudas: La función sign() devuelve el signo de una variable; en el hemisferio sur la latitud es negativa y en el hemisferio norte, positiva. 
-Acordate del tema de los grupos y las líneas.)
+3.  Calculá lo mismo pero para cada hemisferio. Graficalo con una línea de distinto color para cada hemisferio. (Ayudas: La función sign() devuelve el signo de una variable; en el hemisferio sur la latitud es negativa y en el hemisferio norte, positiva. Acordate del tema de los grupos y las líneas.)
 
 ¿Cómo cambia tu descripción del ciclo anual ahora?
 
 ```{r}
+atmosfera_hem <- atmosfera %>%
+                  mutate(hemisferio = ifelse(sign(latitud)== 1,"Norte", "Sur"))
 
+atmosfera_hem %>%
+  group_by(mes, hemisferio) %>%
+  summarise(temp_media_por_mes = mean(temperatura, na.rm = TRUE)) %>%
+  ggplot(aes(mes, temp_media_por_mes)) +
+  geom_line(aes(color = hemisferio))
+
+  
+  
 ```
-
-
